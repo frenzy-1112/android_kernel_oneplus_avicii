@@ -1,0 +1,34 @@
+name: Remove KernelSU-Next Submodule
+
+on:
+  workflow_dispatch:
+
+jobs:
+  remove-submodule:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+        token: ${{ secrets.ACCESS_TOKEN }}
+
+    - name: Set Git identity
+      run: |
+        git config --global user.name "frenzy-1112"
+        git config --global user.email "a.ajit67@gmail.com"
+
+    - name: Remove KernelSU-Next submodule
+      run: |
+        git submodule deinit -f KernelSU-Next || true
+        git rm -f KernelSU-Next || true
+        rm -rf .git/modules/KernelSU-Next
+        rm -rf KernelSU-Next
+        git add . || true
+
+    - name: Commit and push changes
+      run: |
+        git commit -m "🔥 Remove KernelSU-Next submodule"
+        git push
