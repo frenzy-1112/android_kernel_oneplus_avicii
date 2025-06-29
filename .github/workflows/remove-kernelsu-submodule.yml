@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
@@ -22,13 +22,20 @@ jobs:
 
     - name: Remove KernelSU-Next submodule
       run: |
+        echo "🔧 Deinitializing submodule..."
         git submodule deinit -f KernelSU-Next || true
+
+        echo "🗑️ Removing submodule entry..."
         git rm -f KernelSU-Next || true
         rm -rf .git/modules/KernelSU-Next
         rm -rf KernelSU-Next
+
+        echo "🧼 Cleaning up .gitmodules..."
+        sed -i '/KernelSU-Next/,+2d' .gitmodules || true
+
         git add . || true
 
     - name: Commit and push changes
       run: |
-        git commit -m "🔥 Remove KernelSU-Next submodule"
+        git commit -m "🔥 Remove KernelSU-Next submodule" || echo "Nothing to commit"
         git push
